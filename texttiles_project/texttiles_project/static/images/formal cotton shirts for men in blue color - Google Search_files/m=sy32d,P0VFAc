@@ -1,0 +1,9 @@
+loaded_h_0(function(_){var window=this;
+_.SPf=_.x("P0VFAc",[_.bi,_.gcb,_.ecb,_.ar]);
+_.t("P0VFAc");
+var UPf=class extends _.cs{static Sa(){return{Jc:{Hc:_.Up},jsdata:{params:{ctor:_.TPf}},service:{cib:_.GPf,qe:_.cFf,kc:_.Mz}}}constructor(a){super(a.Oa);this.list=a.jsdata.params.yC();this.G7a=_.He(a.jsdata.params,4);this.client=a.jsdata.params.bu()||(new _.HI).vd(24);this.item=a.jsdata.params.getItem();let b;_.Ahe(this.item,(b=this.list.Yg())==null?void 0:b.Jl());this.cib=a.service.cib;this.qe=a.service.qe;this.kc=a.service.kc;this.Hc=a.Jc.Hc}oa(){const a=this.Ia("v3MCVd").el();this.qe.logClick(a);
+this.trigger("rrAb1e",{vzb:this.list,Ai:void 0});this.trigger("bvd70")}Ba(){this.qe.logClick(this.getRoot().el());var a=_.Kcd(this.Hc,_.ame,this.G7a>0?null:{list:this.list});a=_.pc(a.toString());this.kc.navigateTo(a);this.trigger("bvd70")}async Aa(){try{this.qe.logClick(this.getRoot().el()),_.y(await _.y(this.cib.render(this.client,this.item,[this.list]))),this.trigger("bvd70")}finally{_.y()}}};UPf.prototype.$wa$tmqSrf=function(){return this.Aa};UPf.prototype.$wa$dcKtse=function(){return this.Ba};
+UPf.prototype.$wa$nMicgf=function(){return this.oa};_.es(_.SPf,UPf);
+_.v();
+});
+// Google Inc.

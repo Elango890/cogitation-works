@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+<style>
+    body {
+        font-family: DejaVu Sans, sans-serif;
+        font-size: 12px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .logo {
+        width: 120px;
+        margin-bottom: 5px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 6px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f0f0f0;
+    }
+
+    .product-img {
+        width: 60px;
+        height: auto;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- LOGO -->
+<div class="header">
+    <img src="{{ logo_path }}" class="logo">
+    <h2>INVOICE</h2>
+</div>
+
+<hr>
+
+<!-- CUSTOMER DETAILS -->
+<p><strong>Order ID:</strong> {{ order.id }}</p>
+<p><strong>Name:</strong> {{ order.customer_name }}</p>
+<p><strong>Mobile:</strong> {{ order.mobile_number }}</p>
+<p><strong>Address:</strong> {{ order.address }}</p>
+<p><strong>Date:</strong> {{ order.created_at|date:"d M Y" }}</p>
+
+<!-- PRODUCT TABLE -->
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+        <tr>
+            <td>
+                <img src="file://{{ item.product.image.path }}" class="product-img">
+            </td>
+            <td>{{ item.product.product_name }}</td>
+            <td>₹ {{ item.price }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>₹ {{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3 style="text-align:right; margin-top:10px;">
+    Grand Total: ₹ {{ order.total_amount }}
+</h3>
+
+</body>
+</html>

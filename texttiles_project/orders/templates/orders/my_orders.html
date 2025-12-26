@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background: #222;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            color: white;
+        }
+
+        .navbar .brand a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background: red;
+            color: white;
+            font-size: 12px;
+            padding: 2px 5px;
+            border-radius: 50%;
+        }
+
+        /* ===== PAGE ===== */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .order-box {
+            background: #fff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .status {
+            font-weight: bold;
+            color: green;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        .total {
+            text-align: right;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn-invoice { background: #007bff; color: white; }
+        .btn-pdf { background: #28a745; color: white; }
+        .btn-cancel { background: #dc3545; color: white; }
+
+        /* ===== MOBILE ===== */
+        @media(max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                font-size: 12px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .nav-links {
+                justify-content: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<div class="navbar">
+    <div class="brand">
+        <a href="/">TextTiles</a>
+    </div>
+
+    <div class="nav-links">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'products:product_list' %}">Products</a>
+        <a href="{% url 'orders:my_orders' %}">My Orders</a>
+        <a href="{% url 'cart:view_cart' %}">
+            🛒 Cart
+            {% with request.user.cartitem_set.count as cart_count %}
+                {% if cart_count > 0 %}
+                    <span class="cart-badge">{{ cart_count }}</span>
+                {% endif %}
+            {% endwith %}
+        </a>
+        <a href="{% url 'account_logout' %}">Logout</a>
+    </div>
+</div>
+
+<!-- ===== CONTENT ===== -->
+<div class="container">
+    <h2>My Orders</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="order-box">
+
+            <div class="order-header">
+                <div>
+                    <h3>Order #{{ order.id }}</h3>
+                    <p>Date: {{ order.created_at|date:"d M Y" }}</p>
+                </div>
+                <div>
+                    <p>Status: <span class="status">{{ order.status }}</span></p>
+                </div>
+            </div>
+
+            <table>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.product.product_name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹ {{ item.price }}</td>
+                    <td>₹ {{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            <div class="total">
+                <strong>Grand Total: ₹ {{ order.total_amount }}</strong>
+            </div>
+
+            <div class="actions">
+                <a href="{% url 'orders:invoice' order.id %}" class="btn btn-invoice">View Invoice</a>
+                <a href="{% url 'orders:download_invoice' order.id %}" class="btn btn-pdf">Download PDF</a>
+                {% if order.status == "PLACED" %}
+                <a href="{% url 'orders:cancel_order' order.id %}" class="btn btn-cancel">Cancel Order</a>
+                {% endif %}
+            </div>
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align:center;">No orders found.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

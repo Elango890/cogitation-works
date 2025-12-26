@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<title>Products</title>
+
+<style>
+/* ===================== RESET ===================== */
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f8;
+}
+
+/* ===================== NAVBAR ===================== */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #1f2933;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.brand a {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.nav-links a {
+    color: #e5e7eb;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: #fbbf24;
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.cart-link {
+    position: relative;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* ===================== SEARCH ===================== */
+.search-form {
+    display: flex;
+    gap: 8px;
+    margin: 10px auto;
+}
+
+.search-form input,
+.search-form select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    min-width: 160px;
+}
+
+.search-form button {
+    padding: 8px 14px;
+    background: #fbbf24;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.search-form button:hover {
+    background: #f59e0b;
+}
+
+/* ===================== CONTAINER ===================== */
+.container {
+    max-width: 1300px;
+    margin: auto;
+    padding: 24px;
+}
+
+/* ===================== PRODUCT GRID ===================== */
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+/* ===================== PRODUCT CARD ===================== */
+.product-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.product-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+/* ===================== CARD CONTENT ===================== */
+.product-body {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-body h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: #111827;
+}
+
+.product-body p {
+    margin: 3px 0;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    margin-top: 6px;
+}
+
+.discount {
+    color: #16a34a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ===================== BUTTONS ===================== */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.btn {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-weight: 600;
+}
+
+.btn-order {
+    background: #22c55e;
+}
+
+.btn-order:hover {
+    background: #16a34a;
+}
+
+.btn-cart {
+    background: #f59e0b;
+}
+
+.btn-cart:hover {
+    background: #d97706;
+}
+
+.out-stock {
+    margin-top: auto;
+    text-align: center;
+    font-weight: bold;
+    color: #dc2626;
+}
+
+/* ===================== PAGINATION ===================== */
+.pagination {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.pagination a {
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: 600;
+    color: #2563eb;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .search-form {
+        justify-content: center;
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<div class="navbar">
+    <div class="brand">
+        <a href="/">TextTiles</a>
+    </div>
+
+    <form method="GET" class="search-form">
+        <input type="text" name="search" placeholder="Search product..." value="{{ search }}">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>
+                {{ cat.category_name }}
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit">Search</button>
+    </form>
+
+    <div class="nav-links">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'products:product_list' %}">Products</a>
+        <a href="{% url 'orders:my_orders' %}">My Orders</a>
+        <a href="{% url 'cart:view_cart' %}" class="cart-link">🛒 Cart</a>
+        <a href="{% url 'account_logout' %}">Logout</a>
+    </div>
+</div>
+
+<!-- ===================== PRODUCTS ===================== -->
+<div class="container">
+    <div class="product-container">
+        {% for p in page_obj %}
+        <div class="product-card">
+            {% if p.image %}
+                <img src="{{ p.image.url }}" loading="lazy">
+            {% else %}
+                <img src="{% static 'images/no-image.png' %}">
+            {% endif %}
+
+            <div class="product-body ">
+                <h3>{{ p.product_name }}</h3>
+                <p>{{ p.category.category_name }}</p>
+                <div class="price">₹{{ p.price }}</div>
+
+                {% if p.discount > 0 %}
+                <div class="discount">Save ₹{{ p.discount }}</div>
+                {% endif %}
+
+                <p>Size: {{ p.size }}</p>
+                <p>Color: {{ p.color }}</p>
+                <p>Material: {{ p.material }}</p>
+
+                {% if p.stock > 0 %}
+                <div class="btn-group">
+                    <a href="{% url 'orders:place_order' p.id %}">
+                        <button class="btn btn-order">Order</button>
+                    </a>
+                    <a href="{% url 'cart:add_to_cart' p.id %}">
+                        <button class="btn btn-cart">Add Cart</button>
+                    </a>
+                </div>
+                {% else %}
+                <div class="out-stock">Out of Stock</div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p>No products found.</p>
+        {% endfor %}
+    </div>
+
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&search={{ search }}&category={{ selected_category }}">← Previous</a>
+        {% endif %}
+
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&search={{ search }}&category={{ selected_category }}">Next →</a>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>
