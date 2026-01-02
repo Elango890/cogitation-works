@@ -1,7 +1,7 @@
 import boto3
 from django.conf import settings
 
-def list_s3_images(prefix="products/"):
+def get_s3_images(prefix="products/"):
     s3 = boto3.client(
         "s3",
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
@@ -14,10 +14,8 @@ def list_s3_images(prefix="products/"):
         Prefix=prefix
     )
 
-    images = []
-    for obj in response.get("Contents", []):
-        key = obj["Key"]
-        if key.lower().endswith((".png", ".jpg", ".jpeg", ".webp")):
-            images.append((key, key))
-
-    return images
+    return [
+        obj["Key"]
+        for obj in response.get("Contents", [])
+        if obj["Key"].lower().endswith((".jpg", ".png", ".jpeg", ".webp"))
+    ]
