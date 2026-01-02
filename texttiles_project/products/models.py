@@ -1,5 +1,7 @@
 from django.db import models
 
+from config import settings
+
 class Category(models.Model):
     category_name = models.CharField(max_length=100, db_index=True)
 
@@ -15,7 +17,12 @@ class Product(models.Model):
     color = models.CharField(max_length=50, blank=True)
     material = models.CharField(max_length=100, blank=True)
     stock = models.PositiveIntegerField(default=0)
-    image = models.ImageField(upload_to="products/", null=True, blank=True)
+    image_key = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text="Example: products/tiles1.jpg"
+    )
 
     @property
     def discounted_price(self):
@@ -23,3 +30,7 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+    def image_url(self):
+        if self.image_key:
+            return f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{self.image_key}"
+        return ""
