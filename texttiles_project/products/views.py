@@ -16,7 +16,7 @@ def product_list(request):
     if not page_obj:
         products = Product.objects.all().select_related('category').only(
             "id", "product_name", "price", "discount", "size",
-            "color", "material", "stock", "image", "category__category_name"
+            "color", "material", "stock", "s3_image_key", "category__category_name"
         ).order_by("id")
 
         if search:

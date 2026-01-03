@@ -1,5 +1,5 @@
 from django import forms
-from products.models import Product
+from .models import Product
 from products.utils import get_s3_images
 
 class ProductS3ImageAdminForm(forms.ModelForm):

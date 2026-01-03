@@ -18,7 +18,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField(default=0)
 
     # Existing upload (optional)
-    image = models.ImageField(upload_to="products/", null=True, blank=True)
+    #image = models.ImageField(upload_to="products/", null=True, blank=True)
 
     # ✅ NEW: S3 image key
     s3_image_key = models.CharField(
