@@ -11,5 +11,5 @@ class ProductSerializer(serializers.ModelSerializer):
             "id", "product_name", "category",
             "price", "discount", "description",
             "size", "color", "material",
-            "stock", "image",
+            "stock", "s3_image_key",
         ]
